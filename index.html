@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twin Palms - Nxew York</title>
+    <title>Twin Palms - New York</title>
     <meta name="description" content="Capsule One - West Village, NYC">
     
     <!-- Tailwind CSS -->
@@ -47,7 +47,6 @@
         import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'framer-motion';
 
         // --- CONFIGURATION ---
-        // YOU MUST REPLACE THESE WITH YOUR KEYS FROM EMAILJS DASHBOARD
         const EMAILJS_SERVICE_ID = "service_gk1r5xq";
         const EMAILJS_TEMPLATE_ID = "template_7vek7jx";
         const EMAILJS_PUBLIC_KEY = "5wF7EacHGoNSA6-17";
@@ -168,7 +167,12 @@
             useEffect(() => {
                 // Initialize EmailJS (Optional since we pass key in send, but good practice)
                 if(window.emailjs && EMAILJS_PUBLIC_KEY !== "YOUR_PUBLIC_KEY") {
-                    window.emailjs.init(EMAILJS_PUBLIC_KEY);
+                    try {
+                        window.emailjs.init(EMAILJS_PUBLIC_KEY);
+                        console.log("EmailJS initialized with public key:", EMAILJS_PUBLIC_KEY);
+                    } catch (e) {
+                        console.error("EmailJS Init Error:", e);
+                    }
                 }
             }, []);
 
@@ -182,19 +186,13 @@
                     alert("System Error: Email service failed to load. Please check your ad blocker or internet connection.");
                     return;
                 }
-                
-                // Check if keys are configured
-                if(EMAILJS_PUBLIC_KEY === "YOUR_PUBLIC_KEY" || EMAILJS_SERVICE_ID === "YOUR_SERVICE_ID") {
-                    alert("Setup Error: You have not replaced the placeholder keys in the code with your actual EmailJS keys.");
-                    return;
-                }
 
                 setIsLoading(true);
 
                 try {
+                    console.log("Sending email...", { service: EMAILJS_SERVICE_ID, template: EMAILJS_TEMPLATE_ID, pubKey: EMAILJS_PUBLIC_KEY });
+                    
                     // Send via EmailJS
-                    // We send the 'email' parameter to your template.
-                    // We also pass the Public Key as the 4th argument to ensure auth works.
                     await window.emailjs.send(
                         EMAILJS_SERVICE_ID,
                         EMAILJS_TEMPLATE_ID,
@@ -206,12 +204,13 @@
                         EMAILJS_PUBLIC_KEY
                     );
 
+                    console.log("Email sent successfully!");
                     setViewState('success');
                     setEmail('');
                 } catch (error) {
-                    console.error("EmailJS Error:", error);
+                    console.error("EmailJS Error Object:", error);
                     // Extract the specific error message from EmailJS response
-                    const errorMessage = error.text || error.message || "Unknown error occurred";
+                    const errorMessage = error.text || error.message || JSON.stringify(error) || "Unknown error occurred";
                     alert(`Failed to join waitlist. Error: ${errorMessage}`);
                 } finally {
                     setIsLoading(false);
