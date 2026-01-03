@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twin Palms - New York</title>
+    <title>Twin Palms - Nxew York</title>
     <meta name="description" content="Capsule One - West Village, NYC">
     
     <!-- Tailwind CSS -->
@@ -167,7 +167,7 @@
 
             useEffect(() => {
                 // Initialize EmailJS (Optional since we pass key in send, but good practice)
-                if(window.emailjs && EMAILJS_PUBLIC_KEY !== "5wF7EacHGoNSA6-17") {
+                if(window.emailjs && EMAILJS_PUBLIC_KEY !== "YOUR_PUBLIC_KEY") {
                     window.emailjs.init(EMAILJS_PUBLIC_KEY);
                 }
             }, []);
@@ -176,9 +176,16 @@
             const handleSubmit = async (e) => {
                 e.preventDefault();
                 if (!email) return;
+
+                // Check if EmailJS SDK is loaded
+                if (!window.emailjs) {
+                    alert("System Error: Email service failed to load. Please check your ad blocker or internet connection.");
+                    return;
+                }
                 
-                if(EMAILJS_PUBLIC_KEY === "YOUR_PUBLIC_KEY") {
-                    alert("Developer Note: Please configure your EmailJS keys in the code!");
+                // Check if keys are configured
+                if(EMAILJS_PUBLIC_KEY === "YOUR_PUBLIC_KEY" || EMAILJS_SERVICE_ID === "YOUR_SERVICE_ID") {
+                    alert("Setup Error: You have not replaced the placeholder keys in the code with your actual EmailJS keys.");
                     return;
                 }
 
@@ -203,7 +210,9 @@
                     setEmail('');
                 } catch (error) {
                     console.error("EmailJS Error:", error);
-                    alert("There was an error. Please try again later.");
+                    // Extract the specific error message from EmailJS response
+                    const errorMessage = error.text || error.message || "Unknown error occurred";
+                    alert(`Failed to join waitlist. Error: ${errorMessage}`);
                 } finally {
                     setIsLoading(false);
                 }
@@ -256,7 +265,7 @@
                     </div>
 
                     <motion.footer initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2, duration: 1 }} className="absolute bottom-10 w-full flex justify-between px-8 md:px-12 text-[10px] tracking-[0.2em] uppercase text-[#78716c] z-10 font-semibold mix-blend-multiply">
-                        <span>TWIN PALMS</span><span className="hidden md:inline">West Village, NYC</span><span>Est. 2016</span>
+                        <span>TWIN PALMS</span><span className="hidden md:inline">West Village, NYC</span><span>Est. 2026</span>
                     </motion.footer>
                 </div>
             );
